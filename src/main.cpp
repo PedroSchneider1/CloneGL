@@ -101,19 +101,23 @@ int main(int argc, char** argv) {
     }
 
     TGAImage image(width, height, TGAImage::RGB);
-
-    // TGAImage frame(200, 200, TGAImage::RGB);
-    // Vec2i pts[3] = {Vec2i(10,10), Vec2i(100, 30), Vec2i(190, 160)}; 
-    // triangle(pts, frame, red); 
+    Vec3f light_dir(0,0,-1); // *Define light_dir
     
-    for (int i=0; i<model->nfaces(); i++) { 
-        std::vector<int> face = model->face(i); 
+    for (int i = 0; i < model->nfaces(); i++) { 
+        std::vector<int> face = model->face(i); // Get the indices of the vertices of the face
         Vec2i screen_coords[3]; 
-        for (int j=0; j<3; j++) { 
-            Vec3f world_coords = model->vert(face[j]); 
-            screen_coords[j] = Vec2i((world_coords.x+1.)*width/2., (world_coords.y+1.)*height/2.); 
+        Vec3f world_coords[3]; 
+        for (int j = 0; j < 3; j++) { 
+            Vec3f v = model->vert(face[j]); // Get the vertex coordinates
+            screen_coords[j] = Vec2i((v.x + 1.) * width / 2., (v.y + 1.) * height / 2.); // Transform to screen coordinates
+            world_coords[j] = v; // Store world coordinates
         } 
-        triangle(screen_coords, image, TGAColor(rand()%255, rand()%255, rand()%255, 255)); 
+        Vec3f n = (world_coords[2] - world_coords[0]) ^ (world_coords[1] - world_coords[0]); // Compute normal vector
+        n.normalize(); // Normalize the normal vector
+        float intensity = n * light_dir; // Compute the intensity of the light
+        if (intensity > 0) { 
+            triangle(screen_coords, image, TGAColor(intensity * 255, intensity * 255, intensity * 255, 255)); // Draw the triangle with the computed intensity
+        } 
     }
 
     image.flip_vertically(); // to place the origin in the bottom left corner of the image 
