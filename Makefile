@@ -1,12 +1,15 @@
 SYSCONF_LINK = g++
-CPPFLAGS     =
+CPPFLAGS     = -I./src/headers
 LDFLAGS      =
 LIBS         = -lm
 
 DESTDIR = ./
 TARGET  = main
 
-OBJECTS := $(patsubst %.cpp,%.o,$(wildcard ./src/*.cpp))
+CPP_SOURCE = $(wildcard ./src/*.cpp)
+H_SOURCE   = $(wildcard ./src/headers/*.h)
+
+OBJECTS := $(patsubst %.cpp,%.o,$(CPP_SOURCE))
 
 all: $(DESTDIR)$(TARGET)
 
