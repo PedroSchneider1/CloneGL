@@ -1,3 +1,5 @@
 *.o
-*.tga
+output.tga
+render.tga
+scene.tga
 main
